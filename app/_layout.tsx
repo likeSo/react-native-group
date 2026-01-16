@@ -1,19 +1,19 @@
+import tamaguiConfig from "@/tamagui.config";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
+import { ConvexProvider, ConvexReactClient } from "convex/react";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
-import "react-native-reanimated";
-import "../tamagui-web.css";
-
-import tamaguiConfig from "@/tamagui.config";
 import { useColorScheme } from "react-native";
-import { TamaguiProvider } from "tamagui";
+import "react-native-reanimated";
+import { TamaguiProvider, Theme } from "tamagui";
+import "../tamagui-web.css";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -28,11 +28,16 @@ export const unstable_settings = {
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
+const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!, {
+  unsavedChangesWarning: false,
+});
+
 export default function RootLayout() {
   const [loaded, error] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     ...FontAwesome.font,
   });
+  const colorScheme = useColorScheme();
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
@@ -50,20 +55,27 @@ export default function RootLayout() {
   }
 
   return (
-    <TamaguiProvider config={tamaguiConfig}>
-      <RootLayoutNav />
-    </TamaguiProvider>
+    <ConvexProvider client={convex}>
+      <TamaguiProvider config={tamaguiConfig}>
+        <Theme name={colorScheme}>
+          <ThemeProvider
+            value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+          >
+            <RootLayoutNav />
+          </ThemeProvider>
+        </Theme>
+      </TamaguiProvider>
+    </ConvexProvider>
   );
 }
 
 function RootLayoutNav() {
-  const colorScheme = useColorScheme();
-
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      </Stack>
-    </ThemeProvider>
+    <Stack>
+      <Stack.Screen
+        name="index"
+        options={{ headerTitle: "React Native 技术导航" }}
+      />
+    </Stack>
   );
 }
