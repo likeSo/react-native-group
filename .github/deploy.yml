@@ -1,0 +1,28 @@
+name: Deploy dist to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:   # 允许手动触发
+
+permissions:
+  contents: write      # 必须要有权限才能 push 到 gh-pages
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # 需要完整历史，避免 subtree 问题
+
+      - name: Deploy dist folder to gh-pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist                  # 要部署的文件夹
+          branch: gh-pages              # 目标分支（会自动创建如果不存在）
+          clean: true                   # 清理旧文件，只保留本次 dist 的内容
+          single-commit: false          # 可选：true 的话历史只留一个 commit，更干净
+          token: ${{ secrets.GITHUB_TOKEN }}
