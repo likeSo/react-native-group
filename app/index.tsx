@@ -64,7 +64,7 @@ export default function Index() {
           </Text>
           <Text fontSize={14}>{item.description}</Text>
           <Text fontSize={12} color={"$accent10"} fontWeight={"400"}>
-            {item.category}，{new Date(item._creationTime).toLocaleString()}
+            {item.category}，{new Date(item._creationTime).toString()}
           </Text>
         </YStack>
         <Ionicons name="chevron-forward" size={18} color="gray" />
