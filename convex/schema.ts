@@ -8,7 +8,10 @@ export default defineSchema({
     image: v.optional(v.nullable(v.string())),
     link: v.string(),
     category: v.union(v.literal("react"), v.literal("react-native")),
-  }).index("by_title", ["title"]),
+    enabled: v.boolean(),
+  })
+    .index("by_title", ["title"])
+    .index("by_enabled", ["enabled"]),
   posts: defineTable({
     content: v.string(),
     image: v.optional(v.nullable(v.string())),

@@ -1,11 +1,22 @@
+import WebViewBottomSheet from "@/components/WebViewBottomSheet";
 import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
 import { Ionicons } from "@expo/vector-icons";
-import { useQuery } from "convex/react";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { usePaginatedQuery } from "convex/react";
+import { useRef } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { Pressable } from "react-native-gesture-handler";
 import Animated, { CSSAnimationKeyframes } from "react-native-reanimated";
-import { Spinner, Stack, Text, useTheme, XStack, YStack } from "tamagui";
+import {
+  Separator,
+  Spinner,
+  Stack,
+  Text,
+  useTheme,
+  XStack,
+  YStack,
+} from "tamagui";
 
 const pulse: CSSAnimationKeyframes = {
   from: {
@@ -17,8 +28,13 @@ const pulse: CSSAnimationKeyframes = {
 };
 
 export default function Index() {
-  const news = useQuery(api.news.latest, { count: 10 });
+  const { results, loadMore, isLoading } = usePaginatedQuery(
+    api.news.page,
+    "skip",
+    { initialNumItems: 20 },
+  );
   const theme = useTheme();
+  const webViewBottomSheetRef = useRef<BottomSheetModal>(null);
 
   const renderItem = ({
     item,
@@ -35,6 +51,12 @@ export default function Index() {
         px={12}
         py={8}
         items={"center"}
+        onPress={() =>
+          webViewBottomSheetRef.current?.present({
+            url: item.link,
+            title: item.title,
+          })
+        }
       >
         <YStack flex={1} gap={4}>
           <Text fontSize={16} fontWeight={"500"}>
@@ -45,12 +67,12 @@ export default function Index() {
             {item.category}，{new Date(item._creationTime).toLocaleString()}
           </Text>
         </YStack>
-        <Ionicons name="chevron-forward" size={24} color="gray" />
+        <Ionicons name="chevron-forward" size={18} color="gray" />
       </XStack>
     );
   };
 
-  if (!news || news.length === 0) {
+  if (!results || results.length === 0) {
     return (
       <YStack flex={1} items={"center"} justify={"center"} gap={12}>
         <Spinner size={"large"} />
@@ -62,8 +84,9 @@ export default function Index() {
     <Stack flex={1}>
       <FlatList
         style={{ flex: 1 }}
-        data={news}
+        data={results}
         renderItem={renderItem}
+        ItemSeparatorComponent={Separator}
         keyExtractor={(item) => item._id}
         windowSize={5}
         removeClippedSubviews
@@ -81,10 +104,13 @@ export default function Index() {
           },
         ]}
       >
-        <Pressable style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1, flex: 1 })}>
+        <Pressable
+          style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1, flex: 1 })}
+        >
           <Text>留言板 Todo...</Text>
         </Pressable>
       </Animated.View>
+      <WebViewBottomSheet ref={webViewBottomSheetRef} />
     </Stack>
   );
 }
