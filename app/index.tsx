@@ -30,7 +30,7 @@ const pulse: CSSAnimationKeyframes = {
 export default function Index() {
   const { results, loadMore, isLoading } = usePaginatedQuery(
     api.news.page,
-    "skip",
+    {},
     { initialNumItems: 20 },
   );
   const theme = useTheme();
@@ -64,7 +64,7 @@ export default function Index() {
           </Text>
           <Text fontSize={14}>{item.description}</Text>
           <Text fontSize={12} color={"$accent10"} fontWeight={"400"}>
-            {item.category}，{new Date(item._creationTime).toString()}
+            {item.category}，{new Date(item._creationTime).toLocaleString()}
           </Text>
         </YStack>
         <Ionicons name="chevron-forward" size={18} color="gray" />
