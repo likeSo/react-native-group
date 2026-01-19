@@ -1,4 +1,5 @@
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
+import { useTheme } from "@react-navigation/native";
 import * as Clipboard from "expo-clipboard";
 import { forwardRef, ReactNode, useState } from "react";
 import { Platform } from "react-native";
@@ -20,6 +21,9 @@ const LinkButton = styled(Text, {
 });
 
 const WebViewBottomSheet = forwardRef<BottomSheetModal, any>((props, ref) => {
+  // const theme = useTheme();
+  const theme = useTheme();
+
   return (
     <BottomSheetModal
       snapPoints={["80%"]}
@@ -28,6 +32,8 @@ const WebViewBottomSheet = forwardRef<BottomSheetModal, any>((props, ref) => {
       enablePanDownToClose
       enableDismissOnClose
       backdropComponent={CustomBackdrop}
+      backgroundStyle={{ backgroundColor: theme.colors.card }}
+      handleIndicatorStyle={{ backgroundColor: theme.colors.text }}
     >
       {({ data }) => <SheetContent {...data} />}
     </BottomSheetModal>

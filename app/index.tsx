@@ -1,10 +1,8 @@
-import WebViewBottomSheet from "@/components/WebViewBottomSheet";
 import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
 import { Ionicons } from "@expo/vector-icons";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { usePaginatedQuery } from "convex/react";
-import { useRef } from "react";
+import * as Linking from "expo-linking";
 import { FlatList, StyleSheet } from "react-native";
 import { Pressable } from "react-native-gesture-handler";
 import Animated, { CSSAnimationKeyframes } from "react-native-reanimated";
@@ -34,7 +32,7 @@ export default function Index() {
     { initialNumItems: 20 },
   );
   const theme = useTheme();
-  const webViewBottomSheetRef = useRef<BottomSheetModal>(null);
+  // const webViewBottomSheetRef = useRef<BottomSheetModal>(null);
 
   const renderItem = ({
     item,
@@ -51,12 +49,13 @@ export default function Index() {
         px={12}
         py={8}
         items={"center"}
-        onPress={() =>
-          webViewBottomSheetRef.current?.present({
-            url: item.link,
-            title: item.title,
-          })
-        }
+        onPress={() => {
+          // webViewBottomSheetRef.current?.present({
+          //   url: item.link,
+          //   title: item.title,
+          // })
+          Linking.openURL(item.link);
+        }}
       >
         <YStack flex={1} gap={4}>
           <Text fontSize={16} fontWeight={"500"}>
@@ -110,7 +109,7 @@ export default function Index() {
           <Text>留言板 Todo...</Text>
         </Pressable>
       </Animated.View>
-      <WebViewBottomSheet ref={webViewBottomSheetRef} />
+      {/* <WebViewBottomSheet ref={webViewBottomSheetRef} /> */}
     </Stack>
   );
 }
